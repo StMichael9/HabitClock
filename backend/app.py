@@ -1,19 +1,19 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
+
+from models import db, Habit, Session, Category, Goal
 
 app = Flask(__name__)
 CORS(app)
 
-# Might move into another file
 class Config:
     SQLALCHEMY_DATABASE_URI = 'sqlite:///habitclock.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 app.config.from_object(Config)
 
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
 
 @app.route('/')
