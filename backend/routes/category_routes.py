@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from models import db, Category
 from schemas import CategorySchema
 
@@ -12,21 +12,30 @@ categories_schema = CategorySchema(many=True)
 
 @category_bp.route('/', methods=['GET'])
 def get_categories():
-    categories = Category.query.all()
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
+    categories = Category.query.filter_by(user_id=session['user_id']).all()
     result = categories_schema.dump(categories)
     return result, 200
 
 @category_bp.route('/<int:id>', methods=['GET'])
 def get_category(id):
-    category = Category.query.get_or_404(id)
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
+    category = Category.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
     result = category_schema.dump(category)
     return result, 200 
 
 @category_bp.route('/', methods=['POST'])
 def create_category():
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
     data = request.get_json()
     validated_data = category_schema.load(data)
-    new_category = Category(**validated_data)
+    new_category = Category(**validated_data, user_id=session['user_id'])
     db.session.add(new_category)
     db.session.commit()
     result = category_schema.dump(new_category)
@@ -34,9 +43,12 @@ def create_category():
 
 @category_bp.route('/<int:id>', methods=['PATCH'])
 def update_category(id):
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
     data = request.get_json()
     validated_data = category_schema.load(data, partial=True)
-    category = Category.query.get_or_404(id)
+    category = Category.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
     for field, value in validated_data.items():
         setattr(category, field, value)
     db.session.commit()
@@ -44,7 +56,10 @@ def update_category(id):
 
 @category_bp.route('/<int:id>', methods=['DELETE'])
 def delete_category(id):
-    category = Category.query.get_or_404(id)
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
+    category = Category.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
     db.session.delete(category)
     db.session.commit()
-    return {}, 204 
+    return {}, 204

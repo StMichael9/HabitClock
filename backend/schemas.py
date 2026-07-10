@@ -8,6 +8,8 @@ class HabitSchema(Schema):
     isActive = fields.Bool()
     createdAt = fields.DateTime(dump_only=True)
     updatedAt = fields.DateTime(dump_only=True)
+    user_id = fields.Int(dump_only=True)
+
 
 
 class SessionSchema(Schema):
@@ -16,11 +18,15 @@ class SessionSchema(Schema):
     start_time = fields.DateTime(dump_only=True)
     end_time = fields.DateTime()
     duration = fields.Int()
+    user_id = fields.Int(dump_only=True)
+
 
 
 class CategorySchema(Schema):
     id = fields.Int(dump_only=True)
     name = fields.Str(required=True)
+    user_id = fields.Int(dump_only=True)
+
 
 
 class GoalSchema(Schema):
@@ -28,3 +34,4 @@ class GoalSchema(Schema):
     habit_id = fields.Int(required=True)
     target_hours = fields.Int(required=True)
     deadline = fields.DateTime()
+    user_id = fields.Int(dump_only=True)

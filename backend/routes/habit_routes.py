@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from models import db, Habit
 from schemas import HabitSchema
 
@@ -12,23 +12,32 @@ habits_schema = HabitSchema(many=True)
 
 @habit_bp.route('/', methods=['GET'])
 def get_habits():
-    habits = Habit.query.all()
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
+    habits = Habit.query.filter_by(user_id=session['user_id']).all()
     result = habits_schema.dump(habits)
     return result, 200
 
 
 @habit_bp.route('/<int:id>', methods=['GET'])
 def get_habit(id):
-    habit = Habit.query.get_or_404(id)
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
+    habit = Habit.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
     result = habit_schema.dump(habit)
     return result, 200
 
 
 @habit_bp.route('/', methods=['POST'])
 def create_habit():
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
     data = request.get_json()
     validated_data = habit_schema.load(data)
-    new_habit = Habit(**validated_data)
+    new_habit = Habit(**validated_data, user_id=session['user_id'])
     db.session.add(new_habit)
     db.session.commit()
 
@@ -38,9 +47,12 @@ def create_habit():
 
 @habit_bp.route('/<int:id>', methods=['PATCH'])
 def update_habit(id):
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
     data = request.get_json()
     validated_data = habit_schema.load(data, partial=True)
-    habit = Habit.query.get_or_404(id)
+    habit = Habit.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
     for field, value in validated_data.items():
         setattr(habit, field, value)
     db.session.commit()
@@ -49,6 +61,10 @@ def update_habit(id):
 
 @habit_bp.route('/<int:id>', methods=['DELETE'])
 def delete_habit(id):
-    habit = Habit.query.get_or_404(id)
+    if 'user_id' not in session:
+        return {"error": "Unauthorized"}, 401
+
+    habit = Habit.query.filter_by(id=id, user_id=session['user_id']).first_or_404()
     db.session.delete(habit)
     db.session.commit()
+    return {}, 204
