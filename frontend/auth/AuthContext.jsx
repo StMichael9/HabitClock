@@ -48,7 +48,7 @@ function AuthProvider({ children }) {
     try {
       await axios.delete("/logout");
       setUser(null);
-      navigate("/login");
+      navigate("/");
     } catch {
       setError("Logout Failed");
     } finally {
