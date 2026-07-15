@@ -4,6 +4,7 @@ import Login from "../pages/Login";
 import SignUp from "../pages/Signup";
 import Dashboard from "../pages/Dashboard";
 import Habits from "../pages/Habits";
+import Sessions from "../pages/Sessions";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
 
@@ -18,6 +19,14 @@ function App() {
         element={
           <ProtectedRoute>
             <Habits />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sessions"
+        element={
+          <ProtectedRoute>
+            <Sessions />
           </ProtectedRoute>
         }
       />
