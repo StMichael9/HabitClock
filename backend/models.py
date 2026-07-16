@@ -35,6 +35,9 @@ class Habit(db.Model):
     # when a habit is deleted, delete its sessions + goals
     sessions = db.relationship("Session", backref="habit", cascade="all, delete-orphan")
     goals = db.relationship("Goal", backref="habit", cascade="all, delete-orphan")
+    category = db.relationship('Category', backref='habits')
+
+
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
@@ -56,9 +59,7 @@ class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
 
-    # when a category is deleted, delete its habits
-    habits = db.relationship("Habit", backref='category', cascade="all, delete-orphan")
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
 
 class Goal(db.Model):

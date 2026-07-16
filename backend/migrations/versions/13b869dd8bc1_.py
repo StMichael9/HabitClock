@@ -1,8 +1,8 @@
-"""cascade fixes
+"""empty message
 
-Revision ID: 10c8cfdc4806
+Revision ID: 13b869dd8bc1
 Revises: 
-Create Date: 2026-07-09 20:25:19.848519
+Create Date: 2026-07-16 10:33:31.763571
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '10c8cfdc4806'
+revision = '13b869dd8bc1'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,7 +28,7 @@ def upgrade():
     op.create_table('category',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
