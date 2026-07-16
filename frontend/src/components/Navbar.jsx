@@ -6,7 +6,6 @@ const navItems = [
   { to: "/habits", label: "Habits" },
   { to: "/sessions", label: "Sessions" },
   { to: "/goals", label: "Goals" },
-  { to: "/categories", label: "Categories" },
 ];
 
 export default function Navbar() {
