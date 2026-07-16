@@ -15,9 +15,12 @@ def get_categories():
     if 'user_id' not in session:
         return {"error": "Unauthorized"}, 401
 
-    categories = Category.query.filter_by(user_id=session['user_id']).all()
-    result = categories_schema.dump(categories)
-    return result, 200
+    categories = Category.query.filter(
+        (Category.user_id == session['user_id']) |
+        (Category.user_id == None)
+    ).all()
+    return categories_schema.dump(categories), 200
+
 
 @category_bp.route('/<int:id>', methods=['GET'])
 def get_category(id):
