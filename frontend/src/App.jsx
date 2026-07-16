@@ -7,7 +7,6 @@ import Dashboard from "../pages/Dashboard";
 import Habits from "../pages/Habits";
 import Sessions from "../pages/Sessions";
 import Goals from "../pages/Goals";
-import Categories from "../pages/Categories";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
 import useAuth from "../auth/useAuth";
@@ -39,7 +38,6 @@ function App() {
         <Route path="/habits" element={<Habits />} />
         <Route path="/sessions" element={<Sessions />} />
         <Route path="/goals" element={<Goals />} />
-        <Route path="/categories" element={<Categories />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>
