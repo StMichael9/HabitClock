@@ -28,31 +28,31 @@ function SignUp() {
     <>
       <PublicNavbar />
       <div className="signup-container">
-      <h2>Create Account</h2>
+        <h2>Create Account</h2>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-        <button type="submit">Sign Up</button>
-      </form>
+          <button type="submit">Sign Up</button>
+        </form>
 
-      <p>
-        Already have an account? <Link to="/">Login</Link>
-      </p>
+        <p>
+          Already have an account? <Link to="/">Login</Link>
+        </p>
       </div>
     </>
   );

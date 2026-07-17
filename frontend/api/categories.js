@@ -12,9 +12,9 @@ export function createCategory(data) {
 }
 
 export function updateCategory(categoryId, data) {
-  return axios.patch(`/categories${categoryId}`, data);
+  return axios.patch(`/categories/${categoryId}`, data);
 }
 
 export function deleteCategory(categoryId) {
-  return axios.delete(`/categories${categoryId}`);
+  return axios.delete(`/categories/${categoryId}`);
 }
