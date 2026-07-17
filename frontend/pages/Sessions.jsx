@@ -7,29 +7,6 @@ import {
   deleteSession,
 } from "../api/sessions";
 
-const styles = {
-  container: { padding: "20px", fontFamily: "sans-serif" },
-  formGroup: { marginBottom: "20px" },
-  error: {
-    background: "#ffe5e5",
-    padding: "10px",
-    borderRadius: "6px",
-    color: "#b30000",
-    marginBottom: "20px",
-  },
-  card: {
-    padding: "10px",
-    border: "1px solid #ccc",
-    marginBottom: "10px",
-    borderRadius: "6px",
-  },
-  duration: {
-    fontWeight: "bold",
-    color: "#444",
-    margin: "4px 0",
-  },
-};
-
 const parseSessionTime = (value) => {
   if (!value) return null;
   if (value instanceof Date) return value;
@@ -143,33 +120,35 @@ export default function Sessions() {
   }, [currentSession]);
 
   return (
-    <div style={styles.container}>
-      <h1>Sessions</h1>
-      <div style={styles.formGroup}>
-        <h2>Select Habit</h2>
-        <select
-          value={selectedHabitId}
-          onChange={handleHabitSelect}
-          disabled={isLoading}
-          style={{ padding: "5px" }}
-        >
-          <option value="">-- Choose a Habit --</option>
-          {habits.map((h) => (
-            <option key={h.id} value={h.id}>
-              {h.name}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className="sessions-page">
+      <h1 className="page-title">Sessions</h1>
+      <p className="page-subtitle">
+        Start focused blocks and review your history clearly.
+      </p>
 
-      {error && (
-        <div style={styles.error}>
-          <strong>Error:</strong> {error}
+      <section className="panel">
+        <h2>Select Habit</h2>
+        <div className="sessions-top-row">
+          <select
+            value={selectedHabitId}
+            onChange={handleHabitSelect}
+            disabled={isLoading}
+            className="select-input"
+          >
+            <option value="">-- Choose a Habit --</option>
+            {habits.map((h) => (
+              <option key={h.id} value={h.id}>
+                {h.name}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+      </section>
+
+      {error && <div className="error-banner">{error}</div>}
 
       {selectedHabitId && (
-        <div style={styles.formGroup}>
+        <section className="panel">
           <h2>Session Controls</h2>
           {currentSession ? (
             <div>
@@ -177,14 +156,15 @@ export default function Sessions() {
                 <strong>Running Since:</strong>{" "}
                 {parseSessionTime(currentSession.start_time)?.toLocaleString()}
               </p>
-              <h3>
+              <div className="session-running">
                 Time: {Math.floor(elapsed / 60)}m {elapsed % 60}s
-              </h3>
+              </div>
               <button
                 onClick={() =>
                   handleAction(stopSession, "Failed to stop session.")
                 }
                 disabled={isLoading}
+                className="btn btn-danger"
               >
                 Stop Session
               </button>
@@ -195,21 +175,22 @@ export default function Sessions() {
                 handleAction(startSession, "Failed to start session.")
               }
               disabled={isLoading}
+              className="btn btn-primary"
             >
               Start Session
             </button>
           )}
-        </div>
+        </section>
       )}
 
       {selectedHabitId && (
-        <div>
+        <section className="panel session-list">
           <h2>Session History</h2>
           {sessions.length === 0 ? (
-            <p>No sessions yet.</p>
+            <p className="empty-state">No sessions yet.</p>
           ) : (
             sessions.map((s) => (
-              <div key={s.id} style={styles.card}>
+              <div key={s.id} className="session-card">
                 <p>
                   <strong>Start:</strong>{" "}
                   {parseSessionTime(s.start_time)?.toLocaleString()}
@@ -221,29 +202,31 @@ export default function Sessions() {
                     : "Still running"}
                 </p>
                 {s.duration != null && (
-                  <p style={styles.duration}>
+                  <p className="session-duration">
                     Duration: {formatDuration(s.duration)}
                   </p>
                 )}
-                <button
-                  style={{ color: "red", cursor: "pointer" }}
-                  disabled={isLoading}
-                  onClick={() => {
-                    if (window.confirm("Delete this session?")) {
-                      request(
-                        () => deleteSession(s.id),
-                        () => loadSessions(selectedHabitId),
-                        "Failed to delete session.",
-                      );
-                    }
-                  }}
-                >
-                  Delete Session
-                </button>
+                <div className="session-actions">
+                  <button
+                    className="btn btn-delete"
+                    disabled={isLoading}
+                    onClick={() => {
+                      if (window.confirm("Delete this session?")) {
+                        request(
+                          () => deleteSession(s.id),
+                          () => loadSessions(selectedHabitId),
+                          "Failed to delete session.",
+                        );
+                      }
+                    }}
+                  >
+                    Delete Session
+                  </button>
+                </div>
               </div>
             ))
           )}
-        </div>
+        </section>
       )}
     </div>
   );
