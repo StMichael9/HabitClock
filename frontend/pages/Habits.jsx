@@ -6,12 +6,7 @@ import {
   deleteHabit,
 } from "../api/habits";
 
-import {
-  getCategories,
-  createCategory,
-  deleteCategory,
-} from "../api/categories";
-
+import Categories from "../Components/Category";
 export default function Habits() {
   const [habits, setHabits] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -21,24 +16,16 @@ export default function Habits() {
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
 
-  // Custom category creation
-  const [newCategory, setNewCategory] = useState("");
-
   // Editing habit
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editCategoryId, setEditCategoryId] = useState("");
 
-  // UI toggles
-  const [showManageCategories, setShowManageCategories] = useState(false);
-
   const [error, setError] = useState("");
 
-  // Load habits + categories on mount
   useEffect(() => {
     loadHabits();
-    loadCategories();
   }, []);
 
   const loadHabits = async () => {
@@ -47,41 +34,6 @@ export default function Habits() {
       setHabits(res.data);
     } catch {
       setError("Failed to load habits");
-    }
-  };
-
-  const loadCategories = async () => {
-    try {
-      const res = await getCategories();
-      setCategories(res.data);
-    } catch {
-      setError("Failed to load categories");
-    }
-  };
-
-  // Create custom category
-  const handleCreateCustomCategory = async () => {
-    if (!newCategory.trim()) return;
-
-    try {
-      const res = await createCategory({ name: newCategory });
-      setCategories([...categories, res.data]);
-      setNewCategory("");
-    } catch {
-      setError("Failed to create custom category");
-    }
-  };
-
-  // Delete custom category
-  const handleDeleteCategory = async (id) => {
-    try {
-      await deleteCategory(id);
-      setCategories(categories.filter((c) => c.id !== id));
-
-      if (editCategoryId === id) setEditCategoryId("");
-      if (categoryId === id) setCategoryId("");
-    } catch {
-      setError("Failed to delete category");
     }
   };
 
@@ -94,11 +46,11 @@ export default function Habits() {
         category_id: categoryId ? Number(categoryId) : null,
       });
 
+      await loadHabits();
+
       setName("");
       setDescription("");
       setCategoryId("");
-
-      loadHabits();
     } catch {
       setError("Failed to create habit");
     }
@@ -142,6 +94,9 @@ export default function Habits() {
     <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
       <h1>Your Habits</h1>
 
+      {/* Categories Component */}
+      <Categories categories={categories} setCategories={setCategories} />
+
       {/* Create Habit */}
       <div style={{ marginBottom: "20px" }}>
         <h2>Create Habit</h2>
@@ -177,56 +132,6 @@ export default function Habits() {
         </select>
 
         <button onClick={handleCreate}>Create</button>
-
-        {/* Custom Category Input */}
-        <div style={{ marginTop: "10px" }}>
-          <input
-            type="text"
-            placeholder="Create custom category"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            style={{ marginRight: "10px" }}
-          />
-          <button onClick={handleCreateCustomCategory}>Add Category</button>
-        </div>
-
-        {/* Manage Categories Toggle */}
-        <div style={{ marginTop: "15px" }}>
-          <button
-            onClick={() => setShowManageCategories(!showManageCategories)}
-          >
-            {showManageCategories ? "Hide Categories" : "Manage Categories"}
-          </button>
-        </div>
-
-        {/* Manage Categories Section */}
-        {showManageCategories && (
-          <div style={{ marginTop: "10px" }}>
-            <h4>Custom Categories</h4>
-
-            {categories.length === 0 && <p>No custom categories yet.</p>}
-
-            {categories.map((c) => (
-              <div
-                key={c.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "5px 0",
-                  borderBottom: "1px solid #ddd",
-                }}
-              >
-                <span>{c.name}</span>
-                <button
-                  style={{ color: "red" }}
-                  onClick={() => handleDeleteCategory(c.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Error */}

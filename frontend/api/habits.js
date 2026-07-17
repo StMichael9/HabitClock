@@ -13,10 +13,7 @@ export function getHabit(id) {
 }
 
 export function createHabit(data) {
-  return axios.post("/habits/", {
-    name: data.name,
-    description: data.description,
-  });
+  return axios.post("/habits/", data);
 }
 
 export function updateHabit(id, data) {

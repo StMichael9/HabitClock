@@ -10,7 +10,7 @@ import Goals from "../pages/Goals";
 
 import ProtectedRoute from "../auth/ProtectedRoute";
 import useAuth from "../auth/useAuth";
-import Navbar from "./components/Navbar";
+import Navbar from "../Components/Navbar";
 
 function ProtectedLayout() {
   const { user } = useAuth();
