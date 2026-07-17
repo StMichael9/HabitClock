@@ -23,6 +23,34 @@ const styles = {
     marginBottom: "10px",
     borderRadius: "6px",
   },
+  duration: {
+    fontWeight: "bold",
+    color: "#444",
+    margin: "4px 0",
+  },
+};
+
+const parseSessionTime = (value) => {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+
+  const normalizedValue =
+    typeof value === "string" && !/(Z|[+-]\d{2}:?\d{2})$/.test(value)
+      ? `${value.replace(" ", "T")}Z`
+      : value;
+
+  return new Date(normalizedValue);
+};
+
+const formatDuration = (totalSeconds) => {
+  if (totalSeconds == null) return null;
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+
+  if (h > 0) return `${h}h ${m}m ${s}s`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
 };
 
 export default function Sessions() {
@@ -70,11 +98,7 @@ export default function Sessions() {
         setCurrentSession(active);
 
         if (active) {
-          const parsedStart = new Date(
-            typeof active.start_time === "string"
-              ? active.start_time.replace(" ", "T")
-              : active.start_time,
-          );
+          const parsedStart = parseSessionTime(active.start_time);
           const initialDiff = Math.floor((new Date() - parsedStart) / 1000);
           setElapsed(initialDiff > 0 ? initialDiff : 0);
         }
@@ -151,7 +175,7 @@ export default function Sessions() {
             <div>
               <p>
                 <strong>Running Since:</strong>{" "}
-                {new Date(currentSession.start_time).toLocaleString()}
+                {parseSessionTime(currentSession.start_time)?.toLocaleString()}
               </p>
               <h3>
                 Time: {Math.floor(elapsed / 60)}m {elapsed % 60}s
@@ -188,14 +212,19 @@ export default function Sessions() {
               <div key={s.id} style={styles.card}>
                 <p>
                   <strong>Start:</strong>{" "}
-                  {new Date(s.start_time).toLocaleString()}
+                  {parseSessionTime(s.start_time)?.toLocaleString()}
                 </p>
                 <p>
                   <strong>End:</strong>{" "}
                   {s.end_time
-                    ? new Date(s.end_time).toLocaleString()
+                    ? parseSessionTime(s.end_time)?.toLocaleString()
                     : "Still running"}
                 </p>
+                {s.duration != null && (
+                  <p style={styles.duration}>
+                    Duration: {formatDuration(s.duration)}
+                  </p>
+                )}
                 <button
                   style={{ color: "red", cursor: "pointer" }}
                   disabled={isLoading}
