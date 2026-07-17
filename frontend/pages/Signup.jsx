@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../auth/useAuth";
+import PublicNavbar from "../Components/PublicNavbar";
 
 function SignUp() {
   const [email, setEmail] = useState("");
@@ -24,7 +25,9 @@ function SignUp() {
   };
 
   return (
-    <div className="signup-container">
+    <>
+      <PublicNavbar />
+      <div className="signup-container">
       <h2>Create Account</h2>
 
       <form onSubmit={handleSubmit}>
@@ -48,9 +51,10 @@ function SignUp() {
       </form>
 
       <p>
-        Already have an account? <Link to="/login">Login</Link>
+        Already have an account? <Link to="/">Login</Link>
       </p>
-    </div>
+      </div>
+    </>
   );
 }
 
