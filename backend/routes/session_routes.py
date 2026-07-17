@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, session as flask_session
-from datetime import datetime
+import pendulum
 from models import db, Session, Habit
 from schemas import SessionSchema
 
@@ -7,6 +7,7 @@ session_bp = Blueprint('session_bp', __name__, url_prefix='/sessions')
 
 session_schema = SessionSchema()
 sessions_schema = SessionSchema(many=True)
+
 
 @session_bp.route('/<int:habit_id>', methods=['GET'])
 def get_sessions(habit_id):
@@ -16,6 +17,7 @@ def get_sessions(habit_id):
     habit = Habit.query.filter_by(id=habit_id, user_id=flask_session['user_id']).first_or_404()
     sessions = Session.query.filter_by(habit_id=habit.id, user_id=flask_session['user_id']).all()
     return sessions_schema.dump(sessions), 200
+
 
 @session_bp.route('/<int:habit_id>/start', methods=['POST'])
 def start_session(habit_id):
@@ -36,7 +38,7 @@ def start_session(habit_id):
     new_session = Session(
         habit_id=habit.id,
         user_id=flask_session['user_id'],
-        start_time=datetime.utcnow(),
+        start_time=pendulum.now('UTC'),
         end_time=None,
         duration=None
     )
@@ -45,6 +47,7 @@ def start_session(habit_id):
     db.session.commit()
 
     return session_schema.dump(new_session), 201
+
 
 @session_bp.route('/<int:habit_id>/stop', methods=['POST'])
 def stop_session(habit_id):
@@ -62,12 +65,16 @@ def stop_session(habit_id):
     if not active:
         return {"error": "No active session"}, 400
 
-    active.end_time = datetime.utcnow()
-    active.duration = int((active.end_time - active.start_time).total_seconds())
+    end = pendulum.now('UTC')
+    start = pendulum.instance(active.start_time, tz='UTC')
+
+    active.end_time = end
+    active.duration = int((end - start).total_seconds())
 
     db.session.commit()
 
     return session_schema.dump(active), 200
+
 
 @session_bp.route('/<int:session_id>', methods=['DELETE'])
 def delete_session(session_id):
@@ -83,4 +90,3 @@ def delete_session(session_id):
     db.session.commit()
 
     return {}, 204
-

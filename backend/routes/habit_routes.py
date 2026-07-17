@@ -37,7 +37,7 @@ def create_habit():
 
     data = request.get_json()
     validated_data = habit_schema.load(data)
-    new_habit = Habit(**validated_data, category_id=data.get("category_id"), user_id=session['user_id'])
+    new_habit = Habit(**validated_data, user_id=session['user_id'])
     db.session.add(new_habit)
     db.session.commit()
 

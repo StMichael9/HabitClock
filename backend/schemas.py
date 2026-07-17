@@ -1,8 +1,20 @@
 from marshmallow import Schema, fields
+from datetime import timezone
 
+
+class UTCDateTime(fields.DateTime):
+    
+    def _serialize(self, value, attr, obj, **kwargs):
+        if value is not None:
+            if value.tzinfo is None:
+                value = value.replace(tzinfo=timezone.utc)
+            else:
+                value = value.astimezone(timezone.utc)
+        return super()._serialize(value, attr, obj, **kwargs)
+    
 class HabitSchema(Schema):
     id = fields.Int(dump_only=True)
-    category_id = fields.Int(allow_none=True)
+    category_id = fields.Int(allow_none=True, load_only=True)
     name = fields.Str(required=True)
     description = fields.Str()
     isActive = fields.Bool()
@@ -13,11 +25,12 @@ class HabitSchema(Schema):
 
 
 
+
 class SessionSchema(Schema):
     id = fields.Int(dump_only=True)
     habit_id = fields.Int(required=True)
-    start_time = fields.DateTime(dump_only=True)
-    end_time = fields.DateTime()
+    start_time = UTCDateTime(dump_only=True)
+    end_time = UTCDateTime()
     duration = fields.Int()
     user_id = fields.Int(dump_only=True)
 
