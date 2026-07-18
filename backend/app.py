@@ -11,6 +11,7 @@ from routes.category_routes import category_bp
 from routes.goal_routes import goal_bp
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get(
