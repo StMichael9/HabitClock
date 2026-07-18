@@ -30,7 +30,7 @@ CORS(
     app,
     supports_credentials=True,
     origins=[
-        "https://habit-clock-pi.vercel.app",
+        "https://habit-clock-xi.vercel.app",
         "http://localhost:5173"
     ]
 )
