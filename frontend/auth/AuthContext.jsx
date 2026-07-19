@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-axios.defaults.baseURL = "https://habitclock-1.onrender.com/";
-axios.defaults.withCredentials = true;
 
 import { createContext } from "react";
+import { api } from "../api/client";
 
 export const AuthContext = createContext();
 
@@ -18,12 +15,15 @@ function AuthProvider({ children }) {
 
   const signup = async (userData) => {
     setLoading(true);
+    setError(null);
     try {
-      const res = await axios.post("/signup", userData);
+      const res = await api.post("/signup", userData);
       setUser(res.data);
-    } catch {
+      return res.data;
+    } catch (err) {
       setUser(null);
       setError("Signup failed");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -31,13 +31,15 @@ function AuthProvider({ children }) {
 
   const login = async (userData) => {
     setLoading(true);
+    setError(null);
     try {
-      const res = await axios.post("/login", userData);
+      const res = await api.post("/login", userData);
       setUser(res.data);
-      navigate("/dashboard");
-    } catch {
+      return res.data;
+    } catch (err) {
       setUser(null);
       setError("Login Failed");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -45,12 +47,14 @@ function AuthProvider({ children }) {
 
   const logout = async () => {
     setLoading(true);
+    setError(null);
     try {
-      await axios.delete("/logout");
+      await api.delete("/logout");
       setUser(null);
       navigate("/");
-    } catch {
+    } catch (err) {
       setError("Logout Failed");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -58,7 +62,7 @@ function AuthProvider({ children }) {
 
   const checkSession = async () => {
     try {
-      const res = await axios.get("/check_session");
+      const res = await api.get("/check_session");
       setUser(res.data);
     } catch {
       setUser(null);

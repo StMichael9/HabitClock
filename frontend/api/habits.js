@@ -1,25 +1,23 @@
-import axios from "axios";
-axios.defaults.baseURL = "https://habitclock-1.onrender.com/";
-axios.defaults.withCredentials = true;
+import { api } from "./client";
 
 // Returns all habits
 export function getHabits() {
-  return axios.get("/habits");
+  return api.get("/habits/");
 }
 
 // Returns one
 export function getHabit(id) {
-  return axios.get(`/habits${id}`);
+  return api.get(`/habits/${id}`);
 }
 
 export function createHabit(data) {
-  return axios.post("/habits", data);
+  return api.post("/habits/", data);
 }
 
 export function updateHabit(id, data) {
-  return axios.patch(`/habits${id}`, data);
+  return api.patch(`/habits/${id}`, data);
 }
 
 export function deleteHabit(id) {
-  return axios.delete(`/habits${id}`);
+  return api.delete(`/habits/${id}`);
 }

@@ -6,20 +6,25 @@ import PublicNavbar from "../Components/PublicNavbar";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
-  const { login, user } = useAuth();
+  const { login, user, error } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) navigate("/dashboard");
-  }, [user]);
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitError("");
     try {
       await login({ email, password });
-      navigate("/dashboard");
     } catch (err) {
+      setSubmitError(
+        err?.response?.data?.error ||
+          "Login failed. Please check your email and password.",
+      );
       console.error("Error", err);
     }
   };
@@ -49,6 +54,12 @@ function Login() {
 
           <button type="submit">Login</button>
         </form>
+
+        {(submitError || error) && (
+          <div style={{ color: "crimson", marginTop: "12px" }}>
+            {submitError || error}
+          </div>
+        )}
       </div>
     </>
   );

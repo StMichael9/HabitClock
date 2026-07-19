@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/" }]
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://habitclock-1.onrender.com/$1"
+    },
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }

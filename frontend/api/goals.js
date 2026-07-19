@@ -1,24 +1,21 @@
-import axios from "axios";
-
-axios.defaults.baseURL = "https://habitclock-1.onrender.com/";
-axios.defaults.withCredentials = true;
+import { api } from "./client";
 
 export function getGoals() {
-  return axios.get("/goals/");
+  return api.get("/goals/");
 }
 
 export function getGoal(id) {
-  return axios.get(`/goals/${id}`);
+  return api.get(`/goals/${id}`);
 }
 
 export function createGoal(data) {
-  return axios.post("/goals/", data);
+  return api.post("/goals/", data);
 }
 
 export function updateGoal(id, data) {
-  return axios.patch(`/goals/${id}`, data);
+  return api.patch(`/goals/${id}`, data);
 }
 
 export function deleteGoal(id) {
-  return axios.delete(`/goals/${id}`);
+  return api.delete(`/goals/${id}`);
 }
